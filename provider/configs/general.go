@@ -1,9 +1,11 @@
 package configs
 
-import "github.com/opengovern/og-util/pkg/integration"
+import (
+	"github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
+)
 
 const (
-	IntegrationTypeLower = "integrationType"                    // example: aws, azure
-	IntegrationName      = integration.Type("INTEGRATION_NAME") // example: AWS_ACCOUNT, AZURE_SUBSCRIPTION
-	OGPluginRepoURL      = "repo-url"                           // example: github.com/opengovern/og-describer-aws
+	IntegrationTypeLower = "oci_repository"                         // example: aws, azure
+	IntegrationName      = configs.IntegrationTypeOciRepository     // example: AWS_ACCOUNT, AZURE_SUBSCRIPTION
+	OGPluginRepoURL      = "github.com/opengovern/og-describer-oci" // example: github.com/opengovern/og-describer-aws
 )

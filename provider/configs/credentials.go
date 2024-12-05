@@ -1,5 +1,7 @@
 package configs
 
+import "github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
+
 type IntegrationCredentials struct {
-	// You should provide Credentials for any Provider.
+	configs.IntegrationCredentials
 }

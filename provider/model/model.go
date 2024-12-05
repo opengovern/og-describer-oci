@@ -3,3 +3,17 @@
 // Implement types for each resource
 
 package model
+
+import "github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
+
+type Metadata struct {
+}
+
+type OCIImageDescription struct {
+	RegistryType configs.RegistryType
+	Repository   string
+	Image        string
+}
+
+type OCIImageTagDescription struct {
+}

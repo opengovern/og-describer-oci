@@ -1,9 +1,16 @@
 [
   {
-    "ResourceName": "AWS::Redshift::Snapshot",
-    "ListDescriber": "ParallelDescribeRegional(describer.RedshiftSnapshot)",
-    "GetDescriber": "ParallelDescribeRegionalSingleResource(describer.GetRedshiftSnapshot)",
-    "SteampipeTable": "aws_redshift_snapshot",
-    "Model": "RedshiftSnapshot"
+    "ResourceName": "OCI::Image",
+    "ListDescriber": "DescribeByIntegration(describer.OCIImage)",
+    "GetDescriber": "",
+    "SteampipeTable": "oci_image",
+    "Model": "OCIImage"
+  },
+  {
+    "ResourceName": "OCI::ImageTag",
+    "ListDescriber": "DescribeByIntegration(describer.OCIImageTag)",
+    "GetDescriber": "",
+    "SteampipeTable": "oci_image_tag",
+    "Model": "OCIImageTag"
   }
 ]

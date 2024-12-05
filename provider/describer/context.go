@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/opengovern/og-util/pkg/describe/enums"
 	"go.uber.org/zap"
+	"oras.land/oras-go/v2/registry/remote"
 )
 
 var (
@@ -36,4 +37,16 @@ func GetLoggerFromContext(ctx context.Context) *zap.Logger {
 		return zap.NewNop()
 	}
 	return logger
+}
+
+func WithOrasClient(ctx context.Context, client remote.Client) context.Context {
+	return context.WithValue(ctx, "oras_client", client)
+}
+
+func GetOrasClientFromContext(ctx context.Context) remote.Client {
+	client, ok := ctx.Value("oras_client").(remote.Client)
+	if !ok {
+		return nil
+	}
+	return client
 }
