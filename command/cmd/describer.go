@@ -11,6 +11,7 @@ import (
 	"github.com/opengovern/og-describer-oci/steampipe"
 	"github.com/opengovern/og-util/pkg/describe"
 	"github.com/opengovern/og-util/pkg/es"
+	configs2 "github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golang.org/x/net/context"
@@ -53,7 +54,9 @@ var describerCmd = &cobra.Command{
 		logger, _ := zap.NewProduction()
 
 		// TODO: Set the credentials
-		creds := configs.IntegrationCredentials{}
+		creds := configs.IntegrationCredentials{
+			IntegrationCredentials: configs2.IntegrationCredentials{},
+		}
 
 		additionalParameters, err := provider.GetAdditionalParameters(job)
 		if err != nil {
