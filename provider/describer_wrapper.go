@@ -137,15 +137,10 @@ func getACRAuth(loginServer, tenantID, clientID, clientSecret string) (*AuthConf
 		return nil, fmt.Errorf("failed to get ACR refresh token: %w", err)
 	}
 
-	accessToken, err := getACRAccessToken(ctx, loginServer, refreshToken)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get ACR access token: %w", err)
-	}
-
 	return &AuthConfig{
 		Registry: loginServer,
 		Username: "00000000-0000-0000-0000-000000000000",
-		Password: accessToken,
+		Password: refreshToken,
 	}, nil
 }
 
@@ -171,31 +166,6 @@ func getACRRefreshToken(ctx context.Context, acrService, tenantID, aadAccessToke
 		return "", fmt.Errorf("no refresh_token in ACR exchange response")
 	}
 	return refreshToken, nil
-}
-
-func getACRAccessToken(ctx context.Context, acrService, refreshToken string) (string, error) {
-	formData := url.Values{
-		"grant_type":    {"refresh_token"},
-		"service":       {acrService},
-		"refresh_token": {refreshToken},
-		"scope":         {"repository:*:pull,push"},
-	}
-
-	urlStr := fmt.Sprintf("https://%s/oauth2/token", acrService)
-	respBody, err := httpPostForm(ctx, urlStr, formData)
-	if err != nil {
-		return "", err
-	}
-
-	var response map[string]interface{}
-	if err := json.Unmarshal(respBody, &response); err != nil {
-		return "", fmt.Errorf("invalid token response: %w", err)
-	}
-	accessToken, ok := response["access_token"].(string)
-	if !ok || accessToken == "" {
-		return "", fmt.Errorf("no access_token in response")
-	}
-	return accessToken, nil
 }
 
 // DescribeByIntegration TODO: implement a wrapper to pass integration authorization to describer functions

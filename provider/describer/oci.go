@@ -48,7 +48,33 @@ func listImages(ctx context.Context, creds *configs.IntegrationCredentials, trig
 	case configs2.RegistryTypeECR:
 		//TODO
 	case configs2.RegistryTypeACR:
-		//TODO
+		last := ""
+		isMore := true
+		regHost := GetRegistryFromContext(ctx)
+		client := GetOrasClientFromContext(ctx)
+
+		reg, err := remote.NewRegistry(regHost)
+		if err != nil {
+			return nil, err
+		}
+		reg.Client = client
+
+		var images []string
+		for isMore {
+			err = reg.Repositories(ctx, last, func(r []string) error {
+				if len(r) == 0 {
+					isMore = false
+					return nil
+				}
+				images = append(images, r...)
+				last = r[len(r)-1]
+				return nil
+			})
+			if err != nil {
+				return nil, err
+			}
+		}
+		return images, err
 	}
 	return nil, fmt.Errorf("unsupported registry type: %s", creds.RegistryType)
 }
