@@ -50,3 +50,15 @@ func GetOrasClientFromContext(ctx context.Context) remote.Client {
 	}
 	return client
 }
+
+func WithRegistry(ctx context.Context, reg string) context.Context {
+	return context.WithValue(ctx, "registry", reg)
+}
+
+func GetRegistryFromContext(ctx context.Context) string {
+	reg, ok := ctx.Value("registry").(string)
+	if !ok {
+		return ""
+	}
+	return reg
+}

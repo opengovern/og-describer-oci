@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/opengovern/og-describer-template/pkg/sdk"
+	"github.com/opengovern/og-describer-oci/pkg/sdk"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )

@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/opengovern/og-describer-template/provider/configs"
+	"github.com/opengovern/og-describer-oci/provider/configs"
 	"github.com/opengovern/og-util/pkg/describe/enums"
 	"github.com/opengovern/og-util/pkg/integration"
 	"golang.org/x/net/context"

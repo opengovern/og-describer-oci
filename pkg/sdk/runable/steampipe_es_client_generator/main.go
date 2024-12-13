@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/opengovern/og-describer-template/provider/configs"
+	"github.com/opengovern/og-describer-oci/provider/configs"
 	"go/ast"
 	"go/format"
 	"go/parser"
@@ -42,6 +42,8 @@ type ResourceType struct {
 }
 
 func main() {
+	flag.Parse()
+
 	if output == nil || len(*output) == 0 {
 		v := "../../es/resources_clients.go"
 		output = &v

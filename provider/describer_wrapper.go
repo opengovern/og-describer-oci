@@ -11,12 +11,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	model "github.com/opengovern/og-describer-oci/pkg/sdk/models"
 	"github.com/opengovern/og-describer-oci/provider/configs"
+	"github.com/opengovern/og-describer-oci/provider/describer"
 	"github.com/opengovern/og-util/pkg/describe/enums"
+	configs2 "github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
 	"golang.org/x/net/context"
 	"io"
 	"net/http"
 	"net/url"
-	"oras.land/oras-go/v2/registry/remote"
 	"oras.land/oras-go/v2/registry/remote/auth"
 	"oras.land/oras-go/v2/registry/remote/retry"
 	"strings"
@@ -24,6 +25,7 @@ import (
 )
 
 type AuthConfig struct {
+	Registry string
 	Username string
 	Password string
 }
@@ -49,20 +51,31 @@ func httpPostForm(ctx context.Context, urlStr string, data url.Values) ([]byte, 
 	return body, nil
 }
 
-func getGHCRAuth(username, token string) (map[string]AuthConfig, error) {
+func getDockerhubAuth(username, password string) (*AuthConfig, error) {
+	if username == "" || password == "" {
+		return nil, fmt.Errorf("missing required Dockerhub credentials")
+	}
+
+	return &AuthConfig{
+		Registry: "docker.io",
+		Username: username,
+		Password: password,
+	}, nil
+}
+
+func getGHCRAuth(username, token string) (*AuthConfig, error) {
 	if username == "" || token == "" {
 		return nil, fmt.Errorf("missing required GHCR credentials")
 	}
 
-	return map[string]AuthConfig{
-		"ghcr.io": {
-			Username: username,
-			Password: token,
-		},
+	return &AuthConfig{
+		Registry: "ghcr.io",
+		Username: username,
+		Password: token,
 	}, nil
 }
 
-func getECRAuth(accessKey, secretKey, accountID, region string) (map[string]AuthConfig, error) {
+func getECRAuth(accessKey, secretKey, accountID, region string) (*AuthConfig, error) {
 	if accountID == "" || region == "" {
 		return nil, fmt.Errorf("missing required ECR credentials")
 	}
@@ -97,15 +110,14 @@ func getECRAuth(accessKey, secretKey, accountID, region string) (map[string]Auth
 
 	username, password := strings.Split(authStr, ":")[0], strings.Split(authStr, ":")[1]
 
-	return map[string]AuthConfig{
-		registry: {
-			Username: username,
-			Password: password,
-		},
+	return &AuthConfig{
+		Registry: registry,
+		Username: username,
+		Password: password,
 	}, nil
 }
 
-func getACRAuth(loginServer, tenantID, clientID, clientSecret string) (map[string]AuthConfig, error) {
+func getACRAuth(loginServer, tenantID, clientID, clientSecret string) (*AuthConfig, error) {
 	if loginServer == "" || tenantID == "" {
 		return nil, fmt.Errorf("missing required ACR credentials")
 	}
@@ -130,11 +142,10 @@ func getACRAuth(loginServer, tenantID, clientID, clientSecret string) (map[strin
 		return nil, fmt.Errorf("failed to get ACR access token: %w", err)
 	}
 
-	return map[string]AuthConfig{
-		loginServer: {
-			Username: "00000000-0000-0000-0000-000000000000",
-			Password: accessToken,
-		},
+	return &AuthConfig{
+		Registry: loginServer,
+		Username: "00000000-0000-0000-0000-000000000000",
+		Password: accessToken,
 	}, nil
 }
 
@@ -187,25 +198,38 @@ func getACRAccessToken(ctx context.Context, acrService, refreshToken string) (st
 	return accessToken, nil
 }
 
-
 // DescribeByIntegration TODO: implement a wrapper to pass integration authorization to describer functions
 func DescribeByIntegration(describe func(context.Context, *configs.IntegrationCredentials, string, *model.StreamSender) ([]model.Resource, error)) model.ResourceDescriber {
 	return func(ctx context.Context, cfg configs.IntegrationCredentials, triggerType enums.DescribeTriggerType, additionalParameters map[string]string, stream *model.StreamSender) ([]model.Resource, error) {
-		switch cfg.IntegrationCredentials {
+		var creds *AuthConfig
+		var err error
+		switch cfg.RegistryType {
+		case configs2.RegistryTypeDockerhub:
+			creds, err = getDockerhubAuth(cfg.DockerhubCredentials.Username, cfg.DockerhubCredentials.Password)
+		case configs2.RegistryTypeGHCR:
+			creds, err = getGHCRAuth(cfg.GhcrCredentials.Username, cfg.GhcrCredentials.Token)
 
+		case configs2.RegistryTypeECR:
+			creds, err = getECRAuth(cfg.EcrCredentials.AccessKey, cfg.EcrCredentials.SecretKey, cfg.EcrCredentials.AccountID, cfg.EcrCredentials.Region)
+		case configs2.RegistryTypeACR:
+			creds, err = getACRAuth(cfg.AcrCredentials.LoginServer, cfg.AcrCredentials.TenantID, cfg.AcrCredentials.ClientID, cfg.AcrCredentials.ClientSecret)
+		}
+		if err != nil {
+			return nil, err
 		}
 
 		remoteClient := &auth.Client{
 			Client: retry.DefaultClient,
 			Cache:  auth.NewCache(),
-			Credential: auth.StaticCredential(*cfg.ImageRegistry, auth.Credential{
-				Username: *cfg.ImageRegistryUsername,
-				Password: *cfg.ImageRegistryPassword,
-			},
+			Credential: auth.StaticCredential(creds.Registry, auth.Credential{
+				Username: creds.Username,
+				Password: creds.Password,
+			}),
 		}
 
-		var values []model.Resource
+		ctx = describer.WithOrasClient(ctx, remoteClient)
+		ctx = describer.WithRegistry(ctx, creds.Registry)
 
-		return values, nil
+		return describe(ctx, &cfg, string(triggerType), stream)
 	}
 }

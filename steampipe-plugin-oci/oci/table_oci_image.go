@@ -6,15 +6,16 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
-func tableOCIImageTag(ctx context.Context) *plugin.Table {
+func tableOCIImage(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "oci_image_tag",
+		Name:        "oci_image",
 		Description: "Retrieve information about images in the repository",
 		List: &plugin.ListConfig{
-			Hydrate: opengovernance.ListOCIImageTag,
+			Hydrate: opengovernance.ListOCIImage,
 		},
 		Columns: integrationColumns([]*plugin.Column{
 			// Top columns
+
 		}),
 	}
 }
