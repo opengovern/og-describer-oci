@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/opengovern/og-describer-template/provider/configs"
+	"github.com/opengovern/og-describer-oci/provider/configs"
 	"os"
 	"sort"
 	"strings"
@@ -85,10 +85,10 @@ func main() {
 import (
 	"%[1]s/provider/describer"
 	"%[1]s/provider/configs"
-	model "github.com/opengovern/og-describer-%[2]s/pkg/sdk/models"
+	model "%[1]s/pkg/sdk/models"
 )
 var ResourceTypes = map[string]model.ResourceType{
-`, configs.OGPluginRepoURL, configs.IntegrationTypeLower))
+`, configs.OGPluginRepoURL))
 
 	// Iterate over each resource type to build its string representations
 	for _, resourceType := range resourceTypes {
