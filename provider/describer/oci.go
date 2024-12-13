@@ -41,13 +41,15 @@ func listGithubImages(ctx context.Context, creds *configs.IntegrationCredentials
 
 func listImages(ctx context.Context, creds *configs.IntegrationCredentials, triggerType string, stream *models.StreamSender) ([]string, error) {
 	switch creds.RegistryType {
-	case configs2.RegistryTypeDockerhub:
-		//TODO
 	case configs2.RegistryTypeGHCR:
 		return listGithubImages(ctx, creds, triggerType, stream)
+	case configs2.RegistryTypeDockerhub:
+		//TODO
 	case configs2.RegistryTypeECR:
 		//TODO
 	case configs2.RegistryTypeACR:
+		fallthrough
+	default:
 		last := ""
 		isMore := true
 		regHost := GetRegistryFromContext(ctx)
