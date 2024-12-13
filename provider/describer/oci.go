@@ -31,6 +31,7 @@ func OCIImage(ctx context.Context, creds *configs.IntegrationCredentials, trigge
 			}
 			for _, repo := range r {
 				resource := models.Resource{
+					ID:   fmt.Sprintf("%s/%s", regHost, repo),
 					Name: repo,
 					Description: model.OCIImageDescription{
 						RegistryType: creds.RegistryType,
@@ -102,6 +103,7 @@ func OCIImageTag(ctx context.Context, creds *configs.IntegrationCredentials, tri
 							}
 
 							resource := models.Resource{
+								ID:   fmt.Sprintf("%s/%s:%s", regHost, repoName, tag),
 								Name: fmt.Sprintf("%s:%s", repoName, tag),
 								Description: model.OCIImageTagDescription{
 									RegistryType: creds.RegistryType,
