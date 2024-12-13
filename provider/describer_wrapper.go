@@ -63,13 +63,13 @@ func getDockerhubAuth(username, password string) (*AuthConfig, error) {
 	}, nil
 }
 
-func getGHCRAuth(username, token string) (*AuthConfig, error) {
-	if username == "" || token == "" {
+func getGHCRAuth(username, token, owner string) (*AuthConfig, error) {
+	if username == "" || token == "" || owner == "" {
 		return nil, fmt.Errorf("missing required GHCR credentials")
 	}
 
 	return &AuthConfig{
-		Registry: "ghcr.io",
+		Registry: fmt.Sprintf("ghcr.io/%s", owner),
 		Username: username,
 		Password: token,
 	}, nil
@@ -207,7 +207,8 @@ func DescribeByIntegration(describe func(context.Context, *configs.IntegrationCr
 		case configs2.RegistryTypeDockerhub:
 			creds, err = getDockerhubAuth(cfg.DockerhubCredentials.Username, cfg.DockerhubCredentials.Password)
 		case configs2.RegistryTypeGHCR:
-			creds, err = getGHCRAuth(cfg.GhcrCredentials.Username, cfg.GhcrCredentials.Token)
+			creds, err = getGHCRAuth(cfg.GhcrCredentials.Username, cfg.GhcrCredentials.Token, cfg.GhcrCredentials.Owner)
+			ctx = describer.WithOwner(ctx, cfg.GhcrCredentials.Owner)
 
 		case configs2.RegistryTypeECR:
 			creds, err = getECRAuth(cfg.EcrCredentials.AccessKey, cfg.EcrCredentials.SecretKey, cfg.EcrCredentials.AccountID, cfg.EcrCredentials.Region)
