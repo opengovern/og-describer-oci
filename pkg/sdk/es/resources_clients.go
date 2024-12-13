@@ -94,7 +94,11 @@ func (p OCIImagePaginator) NextPage(ctx context.Context) ([]OCIImage, error) {
 	return values, nil
 }
 
-var listOCIImageFilters = map[string]string{}
+var listOCIImageFilters = map[string]string{
+	"image":         "Description.Image",
+	"registry_type": "Description.RegistryType",
+	"repository":    "Description.Repository",
+}
 
 func ListOCIImage(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	plugin.Logger(ctx).Trace("ListOCIImage")
@@ -156,7 +160,11 @@ func ListOCIImage(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 	return nil, nil
 }
 
-var getOCIImageFilters = map[string]string{}
+var getOCIImageFilters = map[string]string{
+	"image":         "Description.Image",
+	"registry_type": "Description.RegistryType",
+	"repository":    "Description.Repository",
+}
 
 func GetOCIImage(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	plugin.Logger(ctx).Trace("GetOCIImage")
@@ -293,7 +301,14 @@ func (p OCIImageTagPaginator) NextPage(ctx context.Context) ([]OCIImageTag, erro
 	return values, nil
 }
 
-var listOCIImageTagFilters = map[string]string{}
+var listOCIImageTagFilters = map[string]string{
+	"descriptor":    "Description.Descriptor",
+	"image":         "Description.Image",
+	"manifest":      "Description.Manifest",
+	"registry_type": "Description.RegistryType",
+	"repository":    "Description.Repository",
+	"tag":           "Description.Tag",
+}
 
 func ListOCIImageTag(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	plugin.Logger(ctx).Trace("ListOCIImageTag")
@@ -355,7 +370,14 @@ func ListOCIImageTag(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 	return nil, nil
 }
 
-var getOCIImageTagFilters = map[string]string{}
+var getOCIImageTagFilters = map[string]string{
+	"descriptor":    "Description.Descriptor",
+	"image":         "Description.Image",
+	"manifest":      "Description.Manifest",
+	"registry_type": "Description.RegistryType",
+	"repository":    "Description.Repository",
+	"tag":           "Description.Tag",
+}
 
 func GetOCIImageTag(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	plugin.Logger(ctx).Trace("GetOCIImageTag")

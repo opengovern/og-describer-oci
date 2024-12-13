@@ -103,7 +103,7 @@ func OCIImageTag(ctx context.Context, creds *configs.IntegrationCredentials, tri
 
 							resource := models.Resource{
 								Name: fmt.Sprintf("%s:%s", repoName, tag),
-								Description: model.OCIImageDescription{
+								Description: model.OCIImageTagDescription{
 									RegistryType: creds.RegistryType,
 									Repository:   regHost,
 									Image:        repoName,

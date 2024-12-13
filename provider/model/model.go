@@ -16,10 +16,13 @@ type OCIImageDescription struct {
 	RegistryType configs.RegistryType
 	Repository   string
 	Image        string
-	Tag          string
-	Manifest     string
-	Descriptor   ocispec.Descriptor
 }
 
 type OCIImageTagDescription struct {
+	RegistryType configs.RegistryType
+	Repository   string
+	Image        string
+	Tag          string
+	Manifest     string
+	Descriptor   ocispec.Descriptor
 }
