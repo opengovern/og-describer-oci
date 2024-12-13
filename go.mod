@@ -6,12 +6,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.36.7
 	github.com/go-errors/errors v1.5.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/google/go-github/v67 v67.0.0
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/nats-io/nats.go v1.36.0
 	github.com/opencontainers/image-spec v1.1.0
 	github.com/opengovern/og-util v1.1.9
-	github.com/opengovern/opencomply v0.517.9-0.20241213110019-1a6cd6b2e3d5
+	github.com/opengovern/opencomply v0.519.0
 	github.com/spf13/cobra v1.8.1
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.10.1
 	go.uber.org/zap v1.27.0
@@ -94,6 +95,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/s2a-go v0.1.8 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.4 // indirect

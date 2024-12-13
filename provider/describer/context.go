@@ -62,3 +62,15 @@ func GetRegistryFromContext(ctx context.Context) string {
 	}
 	return reg
 }
+
+func WithOwner(ctx context.Context, owner string) context.Context {
+	return context.WithValue(ctx, "owner", owner)
+}
+
+func GetOwnerFromContext(ctx context.Context) string {
+	owner, ok := ctx.Value("owner").(string)
+	if !ok {
+		return ""
+	}
+	return owner
+}
