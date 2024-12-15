@@ -173,7 +173,7 @@ func DescribeByIntegration(describe func(context.Context, *configs.IntegrationCr
 	return func(ctx context.Context, cfg configs.IntegrationCredentials, triggerType enums.DescribeTriggerType, additionalParameters map[string]string, stream *model.StreamSender) ([]model.Resource, error) {
 		var creds *AuthConfig
 		var err error
-		switch cfg.RegistryType {
+		switch cfg.GetRegistryType() {
 		case configs2.RegistryTypeDockerhub:
 			creds, err = getDockerhubAuth(cfg.DockerhubCredentials.Username, cfg.DockerhubCredentials.Password)
 		case configs2.RegistryTypeGHCR:
