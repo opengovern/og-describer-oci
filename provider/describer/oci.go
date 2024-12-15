@@ -40,7 +40,7 @@ func listGithubImages(ctx context.Context, creds *configs.IntegrationCredentials
 }
 
 func listImages(ctx context.Context, creds *configs.IntegrationCredentials, triggerType string, stream *models.StreamSender) ([]string, error) {
-	switch creds.RegistryType {
+	switch creds.GetRegistryType() {
 	case configs2.RegistryTypeGHCR:
 		return listGithubImages(ctx, creds, triggerType, stream)
 	case configs2.RegistryTypeDockerhub:
@@ -78,7 +78,7 @@ func listImages(ctx context.Context, creds *configs.IntegrationCredentials, trig
 		}
 		return images, err
 	}
-	return nil, fmt.Errorf("unsupported registry type: %s", creds.RegistryType)
+	return nil, fmt.Errorf("unsupported registry type")
 }
 
 func OCIImage(ctx context.Context, creds *configs.IntegrationCredentials, triggerType string, stream *models.StreamSender) ([]models.Resource, error) {
@@ -95,7 +95,7 @@ func OCIImage(ctx context.Context, creds *configs.IntegrationCredentials, trigge
 			ID:   fmt.Sprintf("%s/%s", regHost, image),
 			Name: image,
 			Description: model.OCIImageDescription{
-				RegistryType: creds.RegistryType,
+				RegistryType: creds.GetRegistryType(),
 				Repository:   regHost,
 				Image:        image,
 			},
@@ -170,7 +170,7 @@ imageLabel:
 				ID:   fmt.Sprintf("%s/%s:%s", regHost, imageName, tag),
 				Name: fmt.Sprintf("%s:%s", imageName, tag),
 				Description: model.OCIImageTagDescription{
-					RegistryType: creds.RegistryType,
+					RegistryType: creds.GetRegistryType(),
 					Repository:   regHost,
 					Image:        imageName,
 					Tag:          tag,
@@ -191,7 +191,7 @@ imageLabel:
 		resource := models.Resource{
 			Name: imageName,
 			Description: model.OCIImageDescription{
-				RegistryType: creds.RegistryType,
+				RegistryType: creds.GetRegistryType(),
 				Repository:   regHost,
 				Image:        imageName,
 			},
