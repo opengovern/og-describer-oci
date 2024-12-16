@@ -65,7 +65,8 @@ func listDockerhubImages(ctx context.Context, creds *configs.IntegrationCredenti
 	}
 	defer tokenResponse.Body.Close()
 	if tokenResponse.StatusCode < 200 || tokenResponse.StatusCode > 299 {
-		return nil, fmt.Errorf("non-2xx status: %d", tokenResponse.StatusCode)
+		body, _ := io.ReadAll(tokenResponse.Body)
+		return nil, fmt.Errorf("non-2xx status: %d, %s", tokenResponse.StatusCode, string(body))
 	}
 	tokenBody, err := io.ReadAll(tokenResponse.Body)
 	if err != nil {
@@ -108,7 +109,7 @@ func listDockerhubImages(ctx context.Context, creds *configs.IntegrationCredenti
 		return nil, err
 	}
 	for _, repo := range repoListStruct.Results {
-		images = append(images, repo.Name)
+		images = append(images, fmt.Sprintf("%s/%s", creds.DockerhubCredentials.Owner, repo.Name))
 	}
 
 	return images, nil
@@ -292,23 +293,6 @@ imageLabel:
 			} else {
 				resources = append(resources, resource)
 			}
-		}
-
-		resource := models.Resource{
-			Name: imageName,
-			Description: model.OCIImageDescription{
-				RegistryType: creds.GetRegistryType(),
-				Repository:   regHost,
-				Image:        imageName,
-			},
-		}
-
-		if stream != nil {
-			if err := (*stream)(resource); err != nil {
-				return nil, err
-			}
-		} else {
-			resources = append(resources, resource)
 		}
 	}
 
