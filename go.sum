@@ -715,8 +715,8 @@ github.com/opencontainers/image-spec v1.1.0 h1:8SG7/vwALn54lVB/0yZ/MMwhFrPYtpEHQ
 github.com/opencontainers/image-spec v1.1.0/go.mod h1:W4s4sFTMaBeK1BQLXbG4AdM2szdn85PY75RI83NrTrM=
 github.com/opengovern/og-util v1.1.9 h1:Pswy4yOEcUS9FZW/3ThTBNNtRdyhhGdW9oj/GJ5WpwY=
 github.com/opengovern/og-util v1.1.9/go.mod h1:dyn8rhmxq59o1jnbgGfmcUvW7iB/eN6OxoTUUx6jEHA=
-github.com/opengovern/opencomply v0.524.23 h1:/CMgfWFjZQmwm0/S2AIQjwCr1Uxv01djvXq895hgfPU=
-github.com/opengovern/opencomply v0.524.23/go.mod h1:LnCUAuO6yKZv2BzOnxgJv4GjA6t0TXf7/xIgPxUBjl8=
+github.com/opengovern/opencomply v0.529.0 h1:MnVYZ8UdgHZM1HWHJqQVGfOha25wPgkT8ZZ7xO/uL3c=
+github.com/opengovern/opencomply v0.529.0/go.mod h1:LnCUAuO6yKZv2BzOnxgJv4GjA6t0TXf7/xIgPxUBjl8=
 github.com/opensearch-project/opensearch-go/v2 v2.3.0 h1:nQIEMr+A92CkhHrZgUhcfsrZjibvB3APXf2a1VwCmMQ=
 github.com/opensearch-project/opensearch-go/v2 v2.3.0/go.mod h1:8LDr9FCgUTVoT+5ESjc2+iaZuldqE+23Iq0r1XeNue8=
 github.com/pganalyze/pg_query_go/v4 v4.2.3 h1:cNLqyiVMasV7YGWyYV+fkXyHp32gDfXVNCqoHztEGNk=

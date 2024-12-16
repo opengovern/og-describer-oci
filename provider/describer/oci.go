@@ -10,6 +10,8 @@ import (
 	"github.com/opengovern/og-describer-oci/provider/model"
 	"github.com/opengovern/opencomply/pkg/utils"
 	configs2 "github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
+	"google.golang.org/api/artifactregistry/v1"
+	"google.golang.org/api/option"
 	"io"
 	"net/http"
 	"oras.land/oras-go/v2/registry/remote"
@@ -55,6 +57,7 @@ func listDockerhubImages(ctx context.Context, creds *configs.IntegrationCredenti
 	if err != nil {
 		return nil, err
 	}
+	tokenRequest = tokenRequest.WithContext(ctx)
 	tokenRequest.Header.Set("Content-Type", "application/json")
 	tokenResponse, err := http.DefaultClient.Do(tokenRequest)
 	if err != nil {
@@ -82,6 +85,7 @@ func listDockerhubImages(ctx context.Context, creds *configs.IntegrationCredenti
 	if err != nil {
 		return nil, err
 	}
+	repoListRequest = repoListRequest.WithContext(ctx)
 	repoListRequest.Header.Set("Authorization", fmt.Sprintf("JWT %s", token))
 	repoListResponse, err := http.DefaultClient.Do(repoListRequest)
 	if err != nil {
@@ -110,12 +114,43 @@ func listDockerhubImages(ctx context.Context, creds *configs.IntegrationCredenti
 	return images, nil
 }
 
+func listGCRImages(ctx context.Context, creds *configs.IntegrationCredentials, triggerType string, stream *models.StreamSender) ([]string, error) {
+	service, err := artifactregistry.NewService(ctx, option.WithCredentialsJSON([]byte(creds.GcrCredentials.JSONKey)))
+	if err != nil {
+		return nil, err
+	}
+	parent := fmt.Sprintf("projects/%s/locations/%s", creds.GcrCredentials.ProjectID, creds.GcrCredentials.Location)
+	res, err := service.Projects.Locations.Repositories.List(parent).Context(ctx).Do()
+	if err != nil {
+		return nil, err
+	}
+
+	images := make([]string, 0)
+	for _, repo := range res.Repositories {
+		repoRes, err := service.Projects.Locations.Repositories.DockerImages.List(repo.Name).Context(ctx).Do()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, img := range repoRes.DockerImages {
+			parts := strings.Split(img.Uri, "/")
+			// registry, project, imageRepo, image
+			_, project, imageRepo, image := parts[0], parts[1], parts[2], strings.Split(parts[3], "@")[0]
+			images = append(images, fmt.Sprintf("%s/%s/%s", project, imageRepo, image))
+		}
+	}
+
+	return images, nil
+}
+
 func listImages(ctx context.Context, creds *configs.IntegrationCredentials, triggerType string, stream *models.StreamSender) ([]string, error) {
 	switch creds.GetRegistryType() {
 	case configs2.RegistryTypeGHCR:
 		return listGithubImages(ctx, creds, triggerType, stream)
 	case configs2.RegistryTypeDockerhub:
 		return listDockerhubImages(ctx, creds, triggerType, stream)
+	case configs2.RegistryTypeGCR:
+		return listGCRImages(ctx, creds, triggerType, stream)
 	case configs2.RegistryTypeECR:
 		//TODO
 	case configs2.RegistryTypeACR:
@@ -210,7 +245,7 @@ imageLabel:
 		var tags []string
 		for isMoreTags {
 			err = repo.Tags(ctx, lastTag, func(t []string) error {
-				if len(t) == 0 {
+				if len(t) == 0 || lastTag == t[len(t)-1] {
 					isMoreTags = false
 					return nil
 				}

@@ -144,6 +144,18 @@ func getACRAuth(loginServer, tenantID, clientID, clientSecret string) (*AuthConf
 	}, nil
 }
 
+func getGCRAuth(projectID, location, jsonKey string) (*AuthConfig, error) {
+	if projectID == "" || jsonKey == "" {
+		return nil, fmt.Errorf("missing required GCR credentials")
+	}
+
+	return &AuthConfig{
+		Registry: fmt.Sprintf("%s-docker.pkg.dev", location),
+		Username: "_json_key",
+		Password: jsonKey,
+	}, nil
+}
+
 func getACRRefreshToken(ctx context.Context, acrService, tenantID, aadAccessToken string) (string, error) {
 	formData := url.Values{
 		"grant_type":   {"access_token"},
@@ -181,7 +193,8 @@ func DescribeByIntegration(describe func(context.Context, *configs.IntegrationCr
 		case configs2.RegistryTypeGHCR:
 			creds, err = getGHCRAuth(cfg.GhcrCredentials.Username, cfg.GhcrCredentials.Token, cfg.GhcrCredentials.Owner)
 			ctx = describer.WithOwner(ctx, cfg.GhcrCredentials.Owner)
-
+		case configs2.RegistryTypeGCR:
+			creds, err = getGCRAuth(cfg.GcrCredentials.ProjectID, cfg.GcrCredentials.Location, cfg.GcrCredentials.JSONKey)
 		case configs2.RegistryTypeECR:
 			creds, err = getECRAuth(cfg.EcrCredentials.AccessKey, cfg.EcrCredentials.SecretKey, cfg.EcrCredentials.AccountID, cfg.EcrCredentials.Region)
 		case configs2.RegistryTypeACR:
