@@ -168,7 +168,6 @@ func getACRRefreshToken(ctx context.Context, acrService, tenantID, aadAccessToke
 	return refreshToken, nil
 }
 
-// DescribeByIntegration TODO: implement a wrapper to pass integration authorization to describer functions
 func DescribeByIntegration(describe func(context.Context, *configs.IntegrationCredentials, string, *model.StreamSender) ([]model.Resource, error)) model.ResourceDescriber {
 	return func(ctx context.Context, cfg configs.IntegrationCredentials, triggerType enums.DescribeTriggerType, additionalParameters map[string]string, stream *model.StreamSender) ([]model.Resource, error) {
 		var creds *AuthConfig
@@ -176,6 +175,9 @@ func DescribeByIntegration(describe func(context.Context, *configs.IntegrationCr
 		switch cfg.GetRegistryType() {
 		case configs2.RegistryTypeDockerhub:
 			creds, err = getDockerhubAuth(cfg.DockerhubCredentials.Username, cfg.DockerhubCredentials.Password)
+			if cfg.DockerhubCredentials.Owner == "" {
+				cfg.DockerhubCredentials.Owner = cfg.DockerhubCredentials.Username
+			}
 		case configs2.RegistryTypeGHCR:
 			creds, err = getGHCRAuth(cfg.GhcrCredentials.Username, cfg.GhcrCredentials.Token, cfg.GhcrCredentials.Owner)
 			ctx = describer.WithOwner(ctx, cfg.GhcrCredentials.Owner)
