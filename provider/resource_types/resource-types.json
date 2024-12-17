@@ -1,16 +1,9 @@
 [
   {
-    "ResourceName": "OCI::Image",
-    "ListDescriber": "DescribeByIntegration(describer.OCIImage)",
+    "ResourceName": "OCI::Artifact",
+    "ListDescriber": "DescribeByIntegration(describer.OCIArtifact)",
     "GetDescriber": "",
-    "SteampipeTable": "oci_image",
-    "Model": "OCIImage"
-  },
-  {
-    "ResourceName": "OCI::ImageTag",
-    "ListDescriber": "DescribeByIntegration(describer.OCIImageTag)",
-    "GetDescriber": "",
-    "SteampipeTable": "oci_image_tag",
-    "Model": "OCIImageTag"
+    "SteampipeTable": "oci_artifact",
+    "Model": "OCIArtifact"
   }
 ]

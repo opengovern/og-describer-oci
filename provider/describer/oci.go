@@ -188,40 +188,9 @@ func listImages(ctx context.Context, creds *configs.IntegrationCredentials, trig
 	return nil, fmt.Errorf("unsupported registry type")
 }
 
-func OCIImage(ctx context.Context, creds *configs.IntegrationCredentials, triggerType string, stream *models.StreamSender) ([]models.Resource, error) {
-	regHost := GetRegistryFromContext(ctx)
-	var resources []models.Resource
-
-	images, err := listImages(ctx, creds, triggerType, stream)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, image := range images {
-		resource := models.Resource{
-			ID:   fmt.Sprintf("%s/%s", regHost, image),
-			Name: image,
-			Description: model.OCIImageDescription{
-				RegistryType: creds.GetRegistryType(),
-				Repository:   regHost,
-				Image:        image,
-			},
-		}
-
-		if stream != nil {
-			if err := (*stream)(resource); err != nil {
-				return nil, err
-			}
-		} else {
-			resources = append(resources, resource)
-		}
-	}
-	return resources, nil
-}
-
 const maxTagPerImage = 20
 
-func OCIImageTag(ctx context.Context, creds *configs.IntegrationCredentials, triggerType string, stream *models.StreamSender) ([]models.Resource, error) {
+func OCIArtifact(ctx context.Context, creds *configs.IntegrationCredentials, triggerType string, stream *models.StreamSender) ([]models.Resource, error) {
 	regHost := GetRegistryFromContext(ctx)
 	client := GetOrasClientFromContext(ctx)
 
@@ -261,6 +230,7 @@ imageLabel:
 		if len(tags) > maxTagPerImage {
 			tags = tags[len(tags)-maxTagPerImage:]
 		}
+		artifacts := make(map[string]model.OCIArtifactDescription)
 		for _, tag := range tags {
 			lastTag = tag
 			ref, manifestBlob, err := repo.FetchReference(ctx, tag)
@@ -272,18 +242,29 @@ imageLabel:
 			if err != nil {
 				return nil, fmt.Errorf("failed to read manifest: %v", err)
 			}
-
-			resource := models.Resource{
-				ID:   fmt.Sprintf("%s/%s:%s", regHost, imageName, tag),
-				Name: fmt.Sprintf("%s:%s", imageName, tag),
-				Description: model.OCIImageTagDescription{
+			if v, ok := artifacts[ref.Digest.String()]; ok {
+				v.Tags = append(v.Tags, tag)
+				artifacts[ref.Digest.String()] = v
+			} else {
+				artifacts[ref.Digest.String()] = model.OCIArtifactDescription{
 					RegistryType: creds.GetRegistryType(),
 					Repository:   regHost,
+					Digest:       ref.Digest.String(),
+					MediaType:    ref.MediaType,
+					Size:         ref.Size,
 					Image:        imageName,
-					Tag:          tag,
 					Manifest:     string(manifest),
-					Descriptor:   ref,
-				},
+					Tags:         []string{tag},
+				}
+			}
+		}
+
+		for digest, artifact := range artifacts {
+			artifact := artifact
+			resource := models.Resource{
+				ID:          fmt.Sprintf("%s/%s@%s", regHost, imageName, digest),
+				Name:        fmt.Sprintf("%s@%s", imageName, digest),
+				Description: artifact,
 			}
 
 			if stream != nil {

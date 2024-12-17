@@ -12,17 +12,14 @@ import (
 type Metadata struct {
 }
 
-type OCIImageDescription struct {
+type OCIArtifactDescription struct {
 	RegistryType configs.RegistryType
 	Repository   string
 	Image        string
-}
-
-type OCIImageTagDescription struct {
-	RegistryType configs.RegistryType
-	Repository   string
-	Image        string
-	Tag          string
+	Digest       string
+	MediaType    string
+	Size         int64
 	Manifest     string
 	Descriptor   ocispec.Descriptor
+	Tags         []string
 }

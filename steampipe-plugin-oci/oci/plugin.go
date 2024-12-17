@@ -17,8 +17,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		},
 		DefaultTransform: transform.FromCamel(),
 		TableMap: map[string]*plugin.Table{
-			"oci_image":     tableOCIImage(ctx),
-			"oci_image_tag": tableOCIImageTag(ctx),
+			"oci_artifact": tableOCIArtifact(ctx),
 		},
 	}
 

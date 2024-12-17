@@ -8,12 +8,12 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
-func tableOCIImageTag(ctx context.Context) *plugin.Table {
+func tableOCIArtifact(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "oci_image_tag",
-		Description: "Retrieve information about images in the repository",
+		Name:        "oci_artifact",
+		Description: "Retrieve information about oci artifacts across multiple namespaces",
 		List: &plugin.ListConfig{
-			Hydrate: opengovernance.ListOCIImageTag,
+			Hydrate: opengovernance.ListOCIArtifact,
 		},
 		Columns: integrationColumns([]*plugin.Column{
 			{
@@ -32,19 +32,29 @@ func tableOCIImageTag(ctx context.Context) *plugin.Table {
 				Transform: transform.FromField("Description.Image"),
 			},
 			{
-				Name:      "tag",
+				Name:      "digest",
 				Type:      proto.ColumnType_STRING,
-				Transform: transform.FromField("Description.Tag"),
+				Transform: transform.FromField("Description.Digest"),
+			},
+			{
+				Name:      "media_type",
+				Type:      proto.ColumnType_STRING,
+				Transform: transform.FromField("Description.MediaType"),
+			},
+			{
+				Name:      "size",
+				Type:      proto.ColumnType_INT,
+				Transform: transform.FromField("Description.Size"),
+			},
+			{
+				Name:      "tags",
+				Type:      proto.ColumnType_JSON,
+				Transform: transform.FromField("Description.Tags"),
 			},
 			{
 				Name:      "manifest",
 				Type:      proto.ColumnType_JSON,
 				Transform: transform.FromField("Description.Manifest"),
-			},
-			{
-				Name:      "descriptor",
-				Type:      proto.ColumnType_JSON,
-				Transform: transform.FromField("Description.Descriptor"),
 			},
 		}),
 	}

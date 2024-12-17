@@ -5,16 +5,13 @@ import (
 )
 
 var Map = map[string]string{
-  "OCI::Image": "oci_image",
-  "OCI::ImageTag": "oci_image_tag",
+  "OCI::Artifact": "oci_artifact",
 }
 
 var DescriptionMap = map[string]interface{}{
-  "OCI::Image": opengovernance.OCIImage{},
-  "OCI::ImageTag": opengovernance.OCIImageTag{},
+  "OCI::Artifact": opengovernance.OCIArtifact{},
 }
 
 var ReverseMap = map[string]string{
-  "oci_image": "OCI::Image",
-  "oci_image_tag": "OCI::ImageTag",
+  "oci_artifact": "OCI::Artifact",
 }
