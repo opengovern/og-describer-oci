@@ -23,7 +23,7 @@ var (
 	pluginPath        = flag.String("pluginPath", "", "Location of the steampipe plugin")
 )
 
-const PluginPath = "" // TODO: give the steampipe plugin path
+const PluginPath = "../../../../steampipe-plugin-oci/oci"
 
 type IntegrationType struct {
 	Name            string
@@ -42,8 +42,6 @@ type ResourceType struct {
 }
 
 func main() {
-	flag.Parse()
-
 	if output == nil || len(*output) == 0 {
 		v := "../../es/resources_clients.go"
 		output = &v
@@ -83,7 +81,7 @@ func main() {
 type {{ .Name }} struct {
 	ResourceID string ` + "`json:\"resource_id\"`" + `
 	PlatformID string ` + "`json:\"platform_id\"`" + `
-	Description   {{ .IntegrationType }}.{{ .Name }}Description 	` + "`json:\"description\"`" + `
+	Description   {{ .IntegrationType }}.{{ .Name }}Description 	` + "`json:\"Description\"`" + `
 	Metadata      {{ .IntegrationType }}.Metadata 					` + "`json:\"metadata\"`" + `
 	DescribedBy 	   string ` + "`json:\"described_by\"`" + `
 	ResourceType       string ` + "`json:\"resource_type\"`" + `
@@ -181,7 +179,7 @@ func List{{ .Name }}(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 		plugin.Logger(ctx).Error("List{{ .Name }} NewSelfClientCached", "error", err)
 		return nil, err
 	}
-	integrationID, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
+	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
 	if err != nil {
 		plugin.Logger(ctx).Error("List{{ .Name }} GetConfigTableValueOrNil for OpenGovernanceConfigKeyIntegrationID", "error", err)
 		return nil, err
@@ -197,7 +195,7 @@ func List{{ .Name }}(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 		return nil, err
 	}
 
-	paginator, err := k.New{{ .Name }}Paginator(essdk.BuildFilter(ctx, d.QueryContext, list{{ .Name }}Filters, integrationID, encodedResourceCollectionFilters, clientType), d.QueryContext.Limit)
+	paginator, err := k.New{{ .Name }}Paginator(essdk.BuildFilter(ctx, d.QueryContext, list{{ .Name }}Filters, integrationId, encodedResourceCollectionFilters, clientType), d.QueryContext.Limit)
 	if err != nil {
 		plugin.Logger(ctx).Error("List{{ .Name }} New{{ .Name }}Paginator", "error", err)
 		return nil, err
@@ -244,7 +242,7 @@ func Get{{ .Name }}(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 	if err != nil {
 		return nil, err
 	}
-	integrationID, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
+	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
 	if err != nil {
 		return nil, err
 	}
@@ -258,7 +256,7 @@ func Get{{ .Name }}(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 	}
 
 	limit := int64(1)
-	paginator, err := k.New{{ .Name }}Paginator(essdk.BuildFilter(ctx, d.QueryContext, get{{ .Name }}Filters, integrationID, encodedResourceCollectionFilters, clientType), &limit)
+	paginator, err := k.New{{ .Name }}Paginator(essdk.BuildFilter(ctx, d.QueryContext, get{{ .Name }}Filters, integrationId, encodedResourceCollectionFilters, clientType), &limit)
 	if err != nil {
 		return nil, err
 	}
@@ -386,6 +384,8 @@ func Get{{ .Name }}(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 						s.ListFilters[fparts[0]] = fparts[1]
 					}
 				}
+				s.GetFilters["platform_integration_id"] = "IntegrationID"
+				s.ListFilters["platform_integration_id"] = "IntegrationID"
 			}
 
 			if s.Index != "" {

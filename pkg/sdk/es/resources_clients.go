@@ -19,7 +19,7 @@ type Client struct {
 type OCIArtifact struct {
 	ResourceID      string                                `json:"resource_id"`
 	PlatformID      string                                `json:"platform_id"`
-	Description     oci_repository.OCIArtifactDescription `json:"description"`
+	Description     oci_repository.OCIArtifactDescription `json:"Description"`
 	Metadata        oci_repository.Metadata               `json:"metadata"`
 	DescribedBy     string                                `json:"described_by"`
 	ResourceType    string                                `json:"resource_type"`
@@ -123,7 +123,7 @@ func ListOCIArtifact(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 		plugin.Logger(ctx).Error("ListOCIArtifact NewSelfClientCached", "error", err)
 		return nil, err
 	}
-	integrationID, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
+	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
 	if err != nil {
 		plugin.Logger(ctx).Error("ListOCIArtifact GetConfigTableValueOrNil for OpenGovernanceConfigKeyIntegrationID", "error", err)
 		return nil, err
@@ -139,7 +139,7 @@ func ListOCIArtifact(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 		return nil, err
 	}
 
-	paginator, err := k.NewOCIArtifactPaginator(essdk.BuildFilter(ctx, d.QueryContext, listOCIArtifactFilters, integrationID, encodedResourceCollectionFilters, clientType), d.QueryContext.Limit)
+	paginator, err := k.NewOCIArtifactPaginator(essdk.BuildFilter(ctx, d.QueryContext, listOCIArtifactFilters, integrationId, encodedResourceCollectionFilters, clientType), d.QueryContext.Limit)
 	if err != nil {
 		plugin.Logger(ctx).Error("ListOCIArtifact NewOCIArtifactPaginator", "error", err)
 		return nil, err
@@ -191,7 +191,7 @@ func GetOCIArtifact(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 	if err != nil {
 		return nil, err
 	}
-	integrationID, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
+	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +205,7 @@ func GetOCIArtifact(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 	}
 
 	limit := int64(1)
-	paginator, err := k.NewOCIArtifactPaginator(essdk.BuildFilter(ctx, d.QueryContext, getOCIArtifactFilters, integrationID, encodedResourceCollectionFilters, clientType), &limit)
+	paginator, err := k.NewOCIArtifactPaginator(essdk.BuildFilter(ctx, d.QueryContext, getOCIArtifactFilters, integrationId, encodedResourceCollectionFilters, clientType), &limit)
 	if err != nil {
 		return nil, err
 	}
