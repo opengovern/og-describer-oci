@@ -12,7 +12,7 @@ require (
 	github.com/nats-io/nats.go v1.36.0
 	github.com/opencontainers/image-spec v1.1.0
 	github.com/opengovern/og-util v1.1.9
-	github.com/opengovern/opencomply v0.529.0
+	github.com/opengovern/opensecurity v0.529.0
 	github.com/spf13/cobra v1.8.1
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.10.1
 	go.uber.org/zap v1.27.0

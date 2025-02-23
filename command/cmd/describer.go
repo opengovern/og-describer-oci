@@ -11,7 +11,7 @@ import (
 	"github.com/opengovern/og-describer-oci/steampipe"
 	"github.com/opengovern/og-util/pkg/describe"
 	"github.com/opengovern/og-util/pkg/es"
-	configs2 "github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
+	configs2 "github.com/opengovern/opensecurity/services/integration/integration-type/oci-repository/configs"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golang.org/x/net/context"

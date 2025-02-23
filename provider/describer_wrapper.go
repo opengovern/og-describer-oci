@@ -13,7 +13,7 @@ import (
 	"github.com/opengovern/og-describer-oci/provider/configs"
 	"github.com/opengovern/og-describer-oci/provider/describer"
 	"github.com/opengovern/og-util/pkg/describe/enums"
-	configs2 "github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
+	configs2 "github.com/opengovern/opensecurity/services/integration/integration-type/oci-repository/configs"
 	"golang.org/x/net/context"
 	"io"
 	"net/http"

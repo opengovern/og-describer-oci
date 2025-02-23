@@ -6,7 +6,7 @@ package model
 
 import (
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
-	"github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
+	"github.com/opengovern/opensecurity/services/integration/integration-type/oci-repository/configs"
 )
 
 type Metadata struct {

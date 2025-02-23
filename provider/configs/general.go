@@ -1,7 +1,7 @@
 package configs
 
 import (
-	"github.com/opengovern/opencomply/services/integration/integration-type/oci-repository/configs"
+	"github.com/opengovern/opensecurity/services/integration/integration-type/oci-repository/configs"
 )
 
 const (
